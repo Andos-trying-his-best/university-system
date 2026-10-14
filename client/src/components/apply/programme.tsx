@@ -61,6 +61,7 @@ export default function Programme() {
   //loader stuff
     const [submitStatus, setSubmitStatus] = useState("idle");
 
+
   // Current step
   const [step, setStep] = useState(1);
 
@@ -80,15 +81,79 @@ useEffect(() => {
   }
 }, [submitStatus, navigate]);
 
-const handleSubmit = () => {
+
+useEffect(() => {
+    const getApplications = async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/applications"
+            );
+
+            const data = await response.json();
+
+            setApplications(data);
+        } catch (error) {
+            console.error("Error retrieving applications:", error);
+        }
+    };
+
+    getApplications();
+}, []);
+
+
+
+const handleSubmit = async () => {
   setSubmitStatus("submitting");
 
-  setTimeout(() => {
+  try {
+    const selectedCohortDate =
+      cohortDate === "january"
+        ? "2027-01-25"
+        : cohortDate === "may"
+          ? "2027-05-24"
+          : "2027-09-20";
+
+    const response = await fetch("http://localhost:5000/api/applications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        idNumber,
+        dateOfBirth,
+        gender,
+        phone,
+        email,
+        address,
+        programme: data,
+        programmeType,
+        cohortDate: selectedCohortDate,
+        education,
+        employmentStatus,
+        institutionEmployer,
+        experience,
+        applicationReason,
+        emergencyName,
+        emergencyPhone,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Server error:", errorData);
+      throw new Error("Failed to submit application");
+    }
+
     setSubmitStatus("success");
-  }, 3500);
+
+  } catch (error) {
+    console.error("Submission error:", error);
+    setSubmitStatus("idle");
+    alert("Something went wrong while submitting your application.");
+  }
 };
-
-
 
 
 
@@ -1437,6 +1502,8 @@ const handleSubmit = () => {
 
   </motion.div>
 )}
+
+
 
 
           </AnimatePresence>

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Apply from "./pages/apply";
 import Login from "./pages/login";
 import Admin from "./pages/admin";
+import Student from "./pages/student";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/apply" element={<Apply />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/student/:studentNumber" element={<Student />} />
       </Routes>
     </BrowserRouter>
   );
